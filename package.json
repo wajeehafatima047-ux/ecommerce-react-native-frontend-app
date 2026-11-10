@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "android1": "react-native run-android",
-    "android": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && react-native run-android",
-    "start": "adb reverse tcp:3000 tcp:3000 && adb reverse tcp:8081 tcp:8081 && react-native start",
+    "android": " adb reverse tcp:8081 tcp:8081 && react-native run-android",
+    "start": " adb reverse tcp:8081 tcp:8081 && react-native start",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start1": "react-native start",

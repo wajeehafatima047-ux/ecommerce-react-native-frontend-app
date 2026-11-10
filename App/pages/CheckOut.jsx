@@ -1,3 +1,7 @@
+
+
+
+
 // import React, { useState } from 'react';
 // import {
 //   View, Text, StyleSheet, TouchableOpacity, ScrollView, Image,
@@ -5,13 +9,10 @@
 // } from 'react-native';
 // import CustomInput from './components/CustomInput';
 // import { useNavigation, useRoute } from '@react-navigation/native';
-// import axios from 'axios';
+// import api from '../api'; // adds the JWT token (adjust path if needed)
 
-// // ⚠️ CHANGE 'localhost' to '10.0.2.2' if testing on an Android Emulator,
-// // or use your machine's local IP address (e.g. 192.168.1.x) if testing on a real device.
-// const SERVER_URL = 'http://localhost:3000';
-// const USER_ID = '6aa641914d1c7253cfc8ee16';
-// const ORDER_URL = `${SERVER_URL}/api/order`; // Changed from /api/orders to match your index route /api/order
+// const ORDER_URL = '/api/order';
+// const CART_URL = '/api/cart';
 
 // const CheckOut = () => {
 //   const navigation = useNavigation();
@@ -30,28 +31,28 @@
 
 //   const [submitting, setSubmitting] = useState(false);
 
-//  const validate = () => {
-//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//   const phoneRegex = /^[0-9]{10,15}$/;
-//   const textRegex = /^[a-zA-Z\s]+$/;
-//   const pincodeRegex = /^[0-9]+$/;
+//   const validate = () => {
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     const phoneRegex = /^[0-9]{10,15}$/;
+//     const textRegex = /^[a-zA-Z\s]+$/;
+//     const pincodeRegex = /^[0-9]+$/;
 
-//   if (!email.trim()) return 'Email is required';
-//   if (!emailRegex.test(email.trim())) return 'Please enter a valid email address';
-//   if (!phone.trim()) return 'Phone number is required';
-//   if (!phoneRegex.test(phone.trim())) return 'Enter a valid phone number (10-15 digits)';
-//   if (!address.trim()) return 'Address is required';
-//   if (!pincode.trim()) return 'Pincode is required';
-//   if (!pincodeRegex.test(pincode.trim())) return 'Pincode must contain numbers only';
-//   if (!city.trim()) return 'City is required';
-//   if (!textRegex.test(city.trim())) return 'City must contain letters only';
-//   if (!state.trim()) return 'State is required';
-//   if (!textRegex.test(state.trim())) return 'State must contain letters only';
-//   if (!country.trim()) return 'Country is required';
-//   if (!textRegex.test(country.trim())) return 'Country must contain letters only';
-//   if (items.length === 0) return 'Your cart is empty';
-//   return null;
-// };
+//     if (!email.trim()) return 'Email is required';
+//     if (!emailRegex.test(email.trim())) return 'Please enter a valid email address';
+//     if (!phone.trim()) return 'Phone number is required';
+//     if (!phoneRegex.test(phone.trim())) return 'Enter a valid phone number (10-15 digits)';
+//     if (!address.trim()) return 'Address is required';
+//     if (!pincode.trim()) return 'Pincode is required';
+//     if (!pincodeRegex.test(pincode.trim())) return 'Pincode must contain numbers only';
+//     if (!city.trim()) return 'City is required';
+//     if (!textRegex.test(city.trim())) return 'City must contain letters only';
+//     if (!state.trim()) return 'State is required';
+//     if (!textRegex.test(state.trim())) return 'State must contain letters only';
+//     if (!country.trim()) return 'Country is required';
+//     if (!textRegex.test(country.trim())) return 'Country must contain letters only';
+//     if (items.length === 0) return 'Your cart is empty';
+//     return null;
+//   };
 
 //   const handlePlaceOrder = async () => {
 //     const validationError = validate();
@@ -63,17 +64,26 @@
 //     setSubmitting(true);
 
 //     try {
+//       // Get the logged-in user's id from their cart (the token identifies the user)
+//       const cartRes = await api.get(CART_URL);
+//       const userId = cartRes.data.cart?.user;
+
+//       if (!userId) {
+//         Alert.alert('Error', 'Could not find your account. Please log in again.');
+//         return;
+//       }
+
 //       const orderItems = items.map((item) => ({
 //         product: item.product._id,
 //         quantity: item.quantity,
 //         price: item.price,
 //       }));
 
-//       const res = await axios.post(ORDER_URL, {
-//         userId: USER_ID,
+//       const res = await api.post(ORDER_URL, {
+//         userId: String(userId),
 //         items: orderItems,
 //         totalAmount: total,
-//         shippingAddress: { email,phone, address, pincode, city, state, country },
+//         shippingAddress: { email, phone, address, pincode, city, state, country },
 //       });
 
 //       Alert.alert('Order placed', 'Your order has been placed successfully (Cash on Delivery).');
@@ -112,29 +122,29 @@
 //         {/* Contact Section */}
 //         <View style={styles.section}>
 //           <CustomInput
-//             label="Email" // Fixed typo from 'lable'
+//             label="Email"
 //             placeholder="Enter your email"
 //             value={email}
 //             onChangeText={setEmail}
 //           />
 //         </View>
 
-//          <View style={{ marginTop: 12 }}>
-//             <CustomInput
-//               label="Phone Number"
-//               placeholder="Enter your phone number"
-//               value={phone}
-//               onChangeText={setPhone}
-//               keyboardType="phone-pad"
-//             />
-//           </View>
+//         <View style={{ marginTop: 12 }}>
+//           <CustomInput
+//             label="Phone Number"
+//             placeholder="Enter your phone number"
+//             value={phone}
+//             onChangeText={setPhone}
+//             keyboardType="phone-pad"
+//           />
+//         </View>
 
 //         {/* Shipping Address Section */}
 //         <Text style={styles.sectionHeader}>Shipping Address</Text>
 //         <View style={styles.section}>
 //           <View style={styles.row}>
 //             <View style={styles.flexItem}>
-//               <CustomInput label="Pincode" placeholder="Pincode" value={pincode} onChangeText={setPincode} keyboardType="number-pad"/>
+//               <CustomInput label="Pincode" placeholder="Pincode" value={pincode} onChangeText={setPincode} keyboardType="number-pad" />
 //             </View>
 //             <View style={styles.flexItem}>
 //               <CustomInput label="City" placeholder="City name" value={city} onChangeText={setCity} />
@@ -306,7 +316,7 @@
 //     borderRadius: 16,
 //     justifyContent: 'center',
 //     alignItems: 'center',
-//     marginTop: 10, // Added to complete your cut-off style declaration safely
+//     marginTop: 10,
 //   },
 //   saveButtonDisabled: {
 //     backgroundColor: '#FFAAAA',
@@ -329,34 +339,35 @@ import {
 } from 'react-native';
 import CustomInput from './components/CustomInput';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import api from '../api'; // adds the JWT token (adjust path if needed)
-
+import api from '../api'; // adds the JWT token; baseURL is the Render server (adjust path if needed)
+ 
 const ORDER_URL = '/api/order';
 const CART_URL = '/api/cart';
-
+ 
 const CheckOut = () => {
   const navigation = useNavigation();
   const route = useRoute();
-
+ 
   // Passed from Cart: navigation.navigate('CheckOut', { items, total })
   const { items = [], total = 0 } = route.params || {};
-
-  const [email, setEmail] = useState('wajeeha@gmail.com');
-  const [phone, setPhone] = useState('03458660781');
-  const [address, setAddress] = useState('strret no 3 house no 45');
-  const [pincode, setPincode] = useState('12345');
-  const [country, setCountry] = useState('hklkdm');
-  const [state, setState] = useState('hjkdlld');
-  const [city, setCity] = useState('jkdls');
-
+ 
+  // Test values removed so real customers start with empty fields
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [country, setCountry] = useState('');
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
+ 
   const [submitting, setSubmitting] = useState(false);
-
+ 
   const validate = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{10,15}$/;
     const textRegex = /^[a-zA-Z\s]+$/;
     const pincodeRegex = /^[0-9]+$/;
-
+ 
     if (!email.trim()) return 'Email is required';
     if (!emailRegex.test(email.trim())) return 'Please enter a valid email address';
     if (!phone.trim()) return 'Phone number is required';
@@ -373,48 +384,62 @@ const CheckOut = () => {
     if (items.length === 0) return 'Your cart is empty';
     return null;
   };
-
+ 
   const handlePlaceOrder = async () => {
+    if (submitting) return; // ignore double taps while the request is running
+ 
     const validationError = validate();
     if (validationError) {
       Alert.alert('Missing information', validationError);
       return;
     }
-
+ 
     setSubmitting(true);
-
+ 
     try {
       // Get the logged-in user's id from their cart (the token identifies the user)
       const cartRes = await api.get(CART_URL);
       const userId = cartRes.data.cart?.user;
-
+ 
       if (!userId) {
         Alert.alert('Error', 'Could not find your account. Please log in again.');
         return;
       }
-
+ 
       const orderItems = items.map((item) => ({
         product: item.product._id,
         quantity: item.quantity,
         price: item.price,
       }));
-
+ 
       const res = await api.post(ORDER_URL, {
         userId: String(userId),
         items: orderItems,
         totalAmount: total,
-        shippingAddress: { email, phone, address, pincode, city, state, country },
+        shippingAddress: {
+          email: email.trim(),
+          phone: phone.trim(),
+          address: address.trim(),
+          pincode: pincode.trim(),
+          city: city.trim(),
+          state: state.trim(),
+          country: country.trim(),
+        },
       });
-
+ 
       Alert.alert('Order placed', 'Your order has been placed successfully (Cash on Delivery).');
       navigation.navigate('DetailsScreen', { order: res.data.order });
     } catch (error) {
-      Alert.alert('Error', error.response?.data?.message || error.message);
+      const message =
+        error.code === 'ECONNABORTED'
+          ? 'The server is taking too long to respond. Please try again.'
+          : error.response?.data?.message || error.message;
+      Alert.alert('Error', message);
     } finally {
       setSubmitting(false);
     }
   };
-
+ 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -423,8 +448,9 @@ const CheckOut = () => {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-
+ 
         {/* Header Block */}
         <View style={styles.headerBlock}>
           <Text style={styles.sectionHeader}>Contact Details</Text>
@@ -438,7 +464,7 @@ const CheckOut = () => {
             </View>
           </View>
         </View>
-
+ 
         {/* Contact Section */}
         <View style={styles.section}>
           <CustomInput
@@ -446,9 +472,11 @@ const CheckOut = () => {
             placeholder="Enter your email"
             value={email}
             onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
-
+ 
         <View style={{ marginTop: 12 }}>
           <CustomInput
             label="Phone Number"
@@ -458,7 +486,7 @@ const CheckOut = () => {
             keyboardType="phone-pad"
           />
         </View>
-
+ 
         {/* Shipping Address Section */}
         <Text style={styles.sectionHeader}>Shipping Address</Text>
         <View style={styles.section}>
@@ -480,7 +508,7 @@ const CheckOut = () => {
             </View>
           </View>
         </View>
-
+ 
         {/* Order Summary */}
         <Text style={styles.sectionHeader}>Order Summary</Text>
         <View style={styles.section}>
@@ -503,7 +531,7 @@ const CheckOut = () => {
             <Text style={styles.codBadgeText}>Cash on Delivery</Text>
           </View>
         </View>
-
+ 
         {/* Place Order Button */}
         <TouchableOpacity
           onPress={handlePlaceOrder}
@@ -521,7 +549,7 @@ const CheckOut = () => {
     </KeyboardAvoidingView>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -647,5 +675,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
-
+ 
 export default CheckOut;
